@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "304799609845",
+    "firebase_url": "https://soccerevents-e5543-default-rtdb.firebaseio.com",
+    "project_id": "soccerevents-e5543",
+    "storage_bucket": "soccerevents-e5543.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304799609845:android:359df1db8678da3795e6bc",
+        "android_client_info": {
+          "package_name": "com.algure.corporatemasti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "304799609845-c1ikiscg3rj3eteu6hbr9c27hdrdlu7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgX_qSF7qTTpfXrZIhgf-49_BLsVIPhn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "304799609845-c1ikiscg3rj3eteu6hbr9c27hdrdlu7m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "304799609845-cp7g3560mofn1114mlrh6rjjgo092f8f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.algure.corporatemasti"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304799609845:android:5ae9ea0d4dd2204f95e6bc",
+        "android_client_info": {
+          "package_name": "com.algure.soccermasti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "304799609845-c1ikiscg3rj3eteu6hbr9c27hdrdlu7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgX_qSF7qTTpfXrZIhgf-49_BLsVIPhn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "304799609845-c1ikiscg3rj3eteu6hbr9c27hdrdlu7m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "304799609845-cp7g3560mofn1114mlrh6rjjgo092f8f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.algure.corporatemasti"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304799609845:android:b3c66cd1488944dc95e6bc",
+        "android_client_info": {
+          "package_name": "com.algure.soccermgt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "304799609845-c1ikiscg3rj3eteu6hbr9c27hdrdlu7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgX_qSF7qTTpfXrZIhgf-49_BLsVIPhn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "304799609845-c1ikiscg3rj3eteu6hbr9c27hdrdlu7m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "304799609845-cp7g3560mofn1114mlrh6rjjgo092f8f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.algure.corporatemasti"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
