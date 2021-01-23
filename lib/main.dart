@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Corporate Masti',
       theme: ThemeData(
-        primarySwatch: Colors.white,
+        primaryColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: 'News'),

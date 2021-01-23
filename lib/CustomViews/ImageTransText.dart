@@ -20,15 +20,18 @@ class ImageTransText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onFormatSelected??(){},
+      onTap: onFormatSelected??(){
+        if(_eventsObject.clickLink!=null && _eventsObject.clickLink.trim().length>4)
+          kLoadClickLink(_eventsObject.clickLink.trim());
+      },
       child: Container(
           decoration: BoxDecoration(
           image: DecorationImage(image: isFromNetwork?NetworkImage(kImageUrlStart+_eventsObject.imageUrl):
           (_eventsObject.imageUrl!=null)?FileImage(File(_eventsObject.imageUrl??""),): AssetImage('images/footim.jpg', ), fit: BoxFit.cover)
           ,color: Colors.white,
         ),
-          margin: EdgeInsets.all(3),
-          height: kWidgetWidth*0.8+(isFromNetwork?50:0),
+          margin: EdgeInsets.symmetric(vertical: kWidgetsMargin),
+          height: kWidgetWidth*0.8,//+(isFromNetwork?50:0),
         width: kWidgetWidth,
         child:Column(
           children: [
@@ -43,15 +46,15 @@ class ImageTransText extends StatelessWidget {
                 textAlign: TextAlign.start,),
               ),
             ),
-            isFromNetwork?FlatButton(
-              onPressed: deleteItemFunc??(){},
-              child: Row(
-                children: [
-                  Icon(Icons.clear, color: Colors.red,),
-                  Text('Delete Event', style: TextStyle(color: Colors.red),)
-                ],
-              ),
-            ):Container(),
+//            isFromNetwork?FlatButton(
+//              onPressed: deleteItemFunc??(){},
+//              child: Row(
+//                children: [
+//                  Icon(Icons.clear, color: Colors.red,),
+//                  Text('Delete Event', style: TextStyle(color: Colors.red),)
+//                ],
+//              ),
+//            ):Container(),
           ],
         )
       ),

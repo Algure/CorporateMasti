@@ -30,25 +30,26 @@ class EventItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Card(
       margin: EdgeInsets.all(8),
+
       color: Colors.blueGrey.withOpacity(0.5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(srcImage, height: srcImage.isEmpty?0:150,width: double.maxFinite, fit: BoxFit.cover,),
+          Image.network(kImageUrlStart+srcImage, height: srcImage.isEmpty?0:150,width: double.maxFinite, fit: BoxFit.cover,),
           SizedBox(height: 15,),
           Text(data, style: TextStyle(color: Colors.white, fontSize: 15)),
-          SizedBox(height: 10,),
-          FlatButton(
-            onPressed: deleteItemFunc,
-            child: Row(
-              children: [
-                Icon(Icons.clear, color: Colors.white,),
-                Text('Delete Event', style: TextStyle(color: Colors.white),)
-              ],
-            ),
-          )
+//          SizedBox(height: 10,),
+//          FlatButton(
+//            onPressed: deleteItemFunc,
+//            child: Row(
+//              children: [
+//                Icon(Icons.clear, color: Colors.white,),
+//                Text('Delete Event', style: TextStyle(color: Colors.white),)
+//              ],
+//            ),
+//          )
         ],
       ),
     );

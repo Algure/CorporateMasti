@@ -3,6 +3,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 const kImageUrlStart='https://firebasestorage.googleapis.com/v0/b/soccerevents-e5543.appspot.com/o/';
@@ -15,6 +16,10 @@ Future<bool> uCheckInternet() async {
     return true;
   }
   return false;
+}
+
+Future<void> kLoadClickLink(String link) async {
+  await launch(link);
 }
 Future<void> uSetPrefsValue(String key, var value) async {
   SharedPreferences sp=await SharedPreferences.getInstance();
