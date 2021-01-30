@@ -12,9 +12,7 @@ class ImageLongWidget extends StatelessWidget {
   EventsObject _eventsObject;
   Function onFormatSelected;
   bool isFromNetwork;
-
   Function deleteItemFunc;
-
 
   ImageLongWidget(this._eventsObject,{this.onFormatSelected, this.deleteItemFunc, this.isFromNetwork=false});
 
@@ -27,18 +25,17 @@ class ImageLongWidget extends StatelessWidget {
           kLoadClickLink(_eventsObject.clickLink.trim());
       },
       child: Container(
-        height: kWidgetWidth*1.5,//+(isFromNetwork?50:0),
+        height: MediaQuery.of(context).size.height*0.7,//+(isFromNetwork?50:0),
         color: Colors.white,
         margin: EdgeInsets.symmetric(vertical: kWidgetsMargin),
         width: kWidgetWidth,
-        child: Card(
-          child: Column(
-            children: [
-              if(isFromNetwork)
-                Image.network(kImageUrlStart+_eventsObject.imageUrl, fit: BoxFit.cover, width: double.infinity, height: kWidgetWidth*1.5,)
-              else
-                if(_eventsObject.imageUrl!=null)Image.file(File(_eventsObject.imageUrl??""), fit: BoxFit.cover, width: kWidgetWidth, height: kWidgetWidth*1.5,)
-                else Image.asset('images/footim.jpg', fit: BoxFit.cover, width: kWidgetWidth, height: kWidgetWidth*1.5,),
+        child: Column(
+          children: [
+            if(isFromNetwork)
+              Image.network(kImageUrlStart+_eventsObject.imageUrl, fit: BoxFit.fill, width: double.infinity, height:MediaQuery.of(context).size.height*0.7)
+            else
+              if(_eventsObject.imageUrl!=null)Image.file(File(_eventsObject.imageUrl??""), fit: BoxFit.cover, width: kWidgetWidth, height: kWidgetWidth*1.8,)
+              else Image.asset('images/footim.jpg', fit: BoxFit.cover, width: kWidgetWidth, height:double.infinity,),
 //            if(isFromNetwork)
 //              FlatButton(
 //                onPressed: deleteItemFunc??(){},
@@ -49,8 +46,7 @@ class ImageLongWidget extends StatelessWidget {
 //                  ],
 //                ),
 //              )
-            ],
-          ),
+          ],
         ),
       ),
     );

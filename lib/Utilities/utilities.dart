@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'constants.dart';
+
 
 const kImageUrlStart='https://firebasestorage.googleapis.com/v0/b/soccerevents-e5543.appspot.com/o/';
 
@@ -21,6 +23,7 @@ Future<bool> uCheckInternet() async {
 Future<void> kLoadClickLink(String link) async {
   await launch(link);
 }
+
 Future<void> uSetPrefsValue(String key, var value) async {
   SharedPreferences sp=await SharedPreferences.getInstance();
   if(sp.containsKey(key)){
@@ -34,12 +37,80 @@ Future<dynamic> uGetSharedPrefValue(String key) async {
   SharedPreferences sp=await SharedPreferences.getInstance();
   return sp.get(key).toString();
 }
+
 void uShowNoInternetDialog(BuildContext context){
   uShowCustomDialog(context:context, icon: CupertinoIcons.cloud_bolt_rain, iconColor: Colors.grey,text:'No iternet connection. 😕');
 }
 
 void uShowErrorDialog(BuildContext context, String errorText){
   uShowCustomDialog(context: context, icon:Icons.warning, iconColor: Colors.red, text: errorText );
+}
+
+Future<void> uShowSignupDialog({ BuildContext context}) async {
+  String fname=await uGetSharedPrefValue(kFnameKey);
+  String sname=await uGetSharedPrefValue(kLnameKey);
+  Dialog creditDialog= Dialog(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    backgroundColor: kDialogLight,
+    child: Container(
+      height: 350,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 20,),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical:20.0),
+              child:Icon(Icons.auto_awesome, color: kThemeOrange, size: 200,)          ),
+          SizedBox(height: 30,),
+          Expanded(child: Text('Welcome ${fname} $sname ! 😊.', style: TextStyle(color:kThemeBlue, fontSize: 20, fontWeight: FontWeight.bold),textAlign: TextAlign.center, )),
+          SizedBox(height: 12,),
+        ],
+      ),
+    ),
+  );
+  showGeneralDialog(context: context,
+      barrierLabel: sname,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: Duration(milliseconds: 500),
+      transitionBuilder: (_, anim, __, child){
+        return SlideTransition(position: Tween(begin: Offset(0,1), end: Offset(0,0)).animate(anim), child: child,);
+      },
+      pageBuilder: (BuildContext context, _, __)=>(creditDialog));
+}
+
+Future<void> uShowLoginDialog({ BuildContext context}) async {
+  String fname=await uGetSharedPrefValue(kFnameKey);
+  String sname=await uGetSharedPrefValue(kLnameKey);
+  Dialog creditDialog= Dialog(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    backgroundColor: kDialogLight,
+    child: Container(
+      height: 350,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: 20,),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical:20.0),
+              child:Icon(Icons.auto_awesome, color: kThemeOrange, size: 200,)          ),
+          SizedBox(height: 30,),
+          Expanded(child: Text('Welcome back ${fname} $sname ! We did miss you 😊.',
+            style: TextStyle(color:kThemeBlue, fontSize: 20, fontWeight: FontWeight.bold),textAlign: TextAlign.center, )),
+          SizedBox(height: 12,),
+        ],
+      ),
+    ),
+  );
+  showGeneralDialog(context: context,
+      barrierLabel: 'cjns',
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: Duration(milliseconds: 500),
+      transitionBuilder: (_, anim, __, child){
+        return SlideTransition(position: Tween(begin: Offset(0,1), end: Offset(0,0)).animate(anim), child: child,);
+      },
+      pageBuilder: (BuildContext context, _, __)=>(creditDialog));
 }
 
 void uShowCustomDialog({BuildContext context, IconData icon, Color iconColor, String text, List buttonList}){

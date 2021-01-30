@@ -27,7 +27,7 @@ class ImageLongWithTextWidget extends StatelessWidget {
           kLoadClickLink(_eventsObject.clickLink.trim());
       } ,
       child: Container(
-        height: kWidgetWidth*1.5,//+(isFromNetwork?50:0),
+        height: kWidgetWidth*2,//+(isFromNetwork?50:0),
         color: Colors.white,
         margin: EdgeInsets.symmetric(vertical: kWidgetsMargin),
         width: kWidgetWidth,

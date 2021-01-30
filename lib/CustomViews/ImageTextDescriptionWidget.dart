@@ -29,6 +29,7 @@ class ImageTextDescriptionWidget extends StatelessWidget {
         color: Colors.white,
 //          height: kWidgetWidth*0.5,
         margin: EdgeInsets.symmetric(vertical: kWidgetsMargin),
+        padding: EdgeInsets.all( kWidgetsMargin),
         child: ListTile(
           leading:
           ClipRRect(

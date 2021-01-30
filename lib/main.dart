@@ -1,3 +1,4 @@
+import 'package:corporatemasti/Pages/DecisionPage.dart';
 import 'package:corporatemasti/pages/NewsPage.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'News'),
+      home: DecisionPage()//MyHomePage(title: 'News'),
     );
   }
 }

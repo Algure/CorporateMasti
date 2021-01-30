@@ -8,70 +8,56 @@ import 'package:corporatemasti/CustomViews/ImageTransTextDown.dart';
 import 'package:corporatemasti/CustomViews/ImageTransTextUp.dart';
 import 'package:corporatemasti/DataObjects/EventData.dart';
 import 'package:corporatemasti/DataObjects/EventsObject.dart';
-import 'package:corporatemasti/Database/OnlineEventsDB.dart';
-import 'package:corporatemasti/Pages/TeamsPage.dart';
-import 'package:corporatemasti/Pages/TournamentsPage.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
+import 'package:corporatemasti/Database/TournamentsDatabase.dart';
+import 'package:corporatemasti/Utilities/constants.dart';
 import 'package:corporatemasti/Utilities/utilities.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
-import '../Utilities/constants.dart';
 import 'FantasyPage.dart';
+import 'NewsPage.dart';
+import 'TeamsPage.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title="News",  this.justLoggedIn=false, this.justSignedIn=false}) : super(key: key);
+class TournamentsPage extends StatefulWidget {
+
+  TournamentsPage({Key key, this.title="Tournaments"}) : super(key: key);
 
   final String title;
-  bool justLoggedIn;
-  bool justSignedIn;
-
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _TournamentsPageState createState() => _TournamentsPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-
+class _TournamentsPageState extends State<TournamentsPage> {
   String userName='Dummy Dummy';
   String userMail='dummy@mail.com';
   double navPicHeight=20;
   double navPicWidth=20;
+  List<Widget> itemList=[];
   bool progress=false;
   double drawerSpacerHeight=5;
-
-  List<Widget> itemList=[];
-
-
   RefreshController _refreshController=RefreshController(initialRefresh: false);
 
   @override
   void initState() {
-    if(widget.justLoggedIn){
-      widget.justLoggedIn=false;
-      uShowLoginDialog(context: context);
-    }
-    if(widget.justSignedIn){
-      widget.justSignedIn=false;
-      uShowSignupDialog(context: context);
-    }
     getAllMarketItems(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       appBar: AppBar(
-
         title: Text(widget.title, style: kPageTitleStyle,),
         iconTheme: IconThemeData(color: kGreen),
         elevation: 0,
       ),
       body: Container(
         margin: EdgeInsets.only(top: 15, left: 8, right: 8),
-        color: Colors.white,
+        color: Colors.transparent,
         child: ModalProgressHUD(
           inAsyncCall: progress,
 
@@ -81,10 +67,13 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             controller: _refreshController,
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: itemList
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal:18.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: itemList
+                ),
               ),
             ),
           ),
@@ -94,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           color: Colors.white,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children:[
                 Container(
                   margin: EdgeInsets.only(left: 20),
@@ -107,8 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       Container(
                         height: 80,width: 80,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(image: AssetImage('images/footballim.jpg'), fit: BoxFit.fill)
+                            shape: BoxShape.circle,
+                            image: DecorationImage(image: AssetImage('images/footballim.jpg'), fit: BoxFit.fill)
                         ),
                       ),
                       SizedBox(height: 10,),
@@ -123,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   onPressed: (){
                     Navigator.pop(context);
-//                    Navigator.push(context, MaterialPageRoute(builder: (context)=>NewsPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
                   },
                   color: Colors.white,
                   child: Row(
@@ -134,7 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-
                 SizedBox(height: drawerSpacerHeight,),
                 FlatButton(
                   onPressed: (){
@@ -154,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   onPressed: (){
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>TournamentsPage()));
+//                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsPage()));
                   },
                   color: Colors.white,
                   child: Row(
@@ -184,21 +172,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   onPressed: (){
                     Navigator.pop(context);
-//                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsPage()));
-                  },
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      Image.asset('images/profile.png', color: kGreen,height: navPicHeight, width: navPicWidth,),
-                      SizedBox(width: 10,),
-                      Text('Profile', style: TextStyle(color: kGreen),)
-                    ],
-                  ),
-                ),
-                Spacer(),
-                FlatButton(
-                  onPressed: (){
-                    Navigator.pop(context);
                     displayAboutDialog();
                   },
                   color: Colors.white,
@@ -210,7 +183,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-
               ]
           ),
         ),
@@ -221,13 +193,11 @@ class _MyHomePageState extends State<MyHomePage> {
   displayAboutDialog(){
     showAboutDialog(
       applicationIcon:Image.asset('images/logo.png', height: 70, width: 200,) ,
-      applicationName: '',
+//      applicationName: 'Corporate-Masti',
       context: this.context,
-      applicationLegalese: '',//'''Brought to you by Cyber-Techies',
-      applicationVersion:'',// '1.0.0',
-      children: [
-        Text('Brought to you by Cyber-Techies', style: TextStyle(color: Colors.grey, fontSize: 8))
-    ]);
+      applicationLegalese: 'Brought to you by Cyber-Techies',
+      applicationVersion: '1.0.0',
+    );
   }
 
   Future<void> getAllMarketItems(BuildContext context) async {
@@ -240,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     itemList=[];
-    DatabaseReference myRef=FirebaseDatabase.instance.reference().child('News');
+    DatabaseReference myRef=FirebaseDatabase.instance.reference().child('Tourn');
     DataSnapshot snapShot=await myRef.once();
     print('gotten value');
     print(snapShot.value.toString());
@@ -249,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     Map<dynamic , dynamic> maps= Map.from(snapShot.value);
-    OnlineEventsDb sDb = OnlineEventsDb();
+    TournamentsDb sDb = TournamentsDb();
 
     for (var key in maps.keys){
       await sDb.insertItem(id: key, item: maps[key].toString());
@@ -290,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> setListFromDb() async {
     showProgress(true);
     itemList=[];
-    OnlineEventsDb sDb = OnlineEventsDb();
+    TournamentsDb sDb = TournamentsDb();
     List<EventData> eventsList=await sDb.getEvents();
     for(EventData eves in eventsList){
       try {
@@ -321,7 +291,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void reDownloadItems() async{
-
     showProgress(true);
     DateTime now= DateTime.now();
     String formattedDate=  DateFormat('YY:MM:dd').format(now);
@@ -331,7 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     itemList=[];
-    DatabaseReference myRef=FirebaseDatabase.instance.reference().child('News');
+    DatabaseReference myRef=FirebaseDatabase.instance.reference().child('Tourn');
     DataSnapshot snapShot=await myRef.once();
     print('gotten value');
     print(snapShot.value.toString());
@@ -340,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
     Map<dynamic , dynamic> maps= Map.from(snapShot.value);
-    OnlineEventsDb sDb = OnlineEventsDb();
+    TournamentsDb sDb = TournamentsDb();
 
     for (var key in maps.keys){
       await sDb.insertItem(id: key, item: maps[key].toString());
@@ -377,5 +346,4 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     showProgress(false);
   }
-
 }

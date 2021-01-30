@@ -10,19 +10,12 @@ class TeamWidget extends StatelessWidget {
   String teamData;
   Function onDeletePressed;
   Function onTeamPressed;
-
   String teamName;
-
   String teamSpeed;
-
   String teamPower;
-
   String teamShot;
-
   String teamLogo;
-
   String largeNumberText;
-
   double rowWidth=5;
 
   TeamWidget({this.teamData, this.onDeletePressed, this.onTeamPressed, this.largeNumberText='00'}){
