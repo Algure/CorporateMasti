@@ -5,6 +5,7 @@ import 'package:corporatemasti/Pages/LoginFlow/LoginPage.dart';
 import 'package:corporatemasti/Pages/LoginFlow/TeamChoosePage.dart';
 import 'package:corporatemasti/Utilities/constants.dart';
 import 'package:corporatemasti/Utilities/utilities.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -245,6 +246,7 @@ class _SignupPageState extends State<SignupPage> {
                           child: Text('Sign up', style: TextStyle(color: Colors.black),),
                           splashColor: Colors.white,),
                       ),
+                      SizedBox(height: 30,),
                       Container(
                         height: 45,
                         child: Row(
@@ -357,17 +359,6 @@ class _SignupPageState extends State<SignupPage> {
 //        return;
 //      }
 
-      _state = _state.trim();
-      if (_state == null || _state.isEmpty) {
-        showProgress(false);
-        uShowErrorDialog(this.context, 'State cannot be empty');
-        return;
-      } else if (_state.contains(' ')) {
-        showProgress(false);
-        uShowErrorDialog(this.context, 'Invalid state selection');
-        return;
-      }
-
       if (_password.isEmpty || _password2.isEmpty) {
         showProgress(false);
         uShowErrorDialog(this.context, 'Password cannot be empty');
@@ -403,6 +394,28 @@ class _SignupPageState extends State<SignupPage> {
       );
       return;
     }
+    bool hasError=false;
+    FirebaseAuth fbauth = FirebaseAuth.instance;
+    UserCredential userCred = await fbauth.createUserWithEmailAndPassword(
+        email: _email, password: _password).catchError((onError)=>{
+          if(onError!=null){
+            hasError=true
+          }
+    });
+    if(userCred.user==null || hasError) {
+      showProgress(false);
+      uShowCustomDialog(
+        context: this.context,
+        icon: CupertinoIcons.person,
+        iconColor: Colors.blueGrey,
+        text: 'An error occured !',
+      );
+      return;
+    }
+
+    String id = userCred.user.uid.toString();
+    await uSetPrefsValue('id', id);
+
     print('ran others');
     SharedPreferences sp=await SharedPreferences.getInstance();
     await sp.setString('email', _email);
@@ -415,7 +428,7 @@ class _SignupPageState extends State<SignupPage> {
     showProgress(false);
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context){
-      return MyHomePage(justSignedIn: true,);
+      return TeamChoosePage();
     }));
     dispose();
   }

@@ -19,7 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool showPassword=false;
   double marginVal=16;
-  Color textFillColor=Color(0x22FFFFFF);
+  Color textFillColor=Color(0xFFEEEEEE);
   CurvedAnimation slideInLeftAnim;
   String password;
   String email;
@@ -216,7 +216,6 @@ class _LoginPageState extends State<LoginPage> {
         uShowNoInternetDialog(this.context);
       }
       else {
-        setSpinner(true);
         attemptLogin();
       }
     }catch ( e){
@@ -248,14 +247,14 @@ class _LoginPageState extends State<LoginPage> {
             text: 'Sorry: it appears we do not have your account.\nPlease quickly follow the sign-up process.',
             buttonList: [
               ['Sign-Up', kLightBlue, () {
-                Navigator.pushNamed(context, '/signup');
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
               }
               ]
             ]);
         return;
       }
       bool error=false;
-
       print('gotten to sign IN');//Debug method
       FirebaseAuth fbauth = FirebaseAuth.instance;
       var userCred = await fbauth.signInWithEmailAndPassword(
@@ -271,13 +270,8 @@ class _LoginPageState extends State<LoginPage> {
         uShowCustomDialog(context: this.context,
             icon: Icons.warning,
             iconColor: Colors.red,
-            text: 'Sorry: it appears there is an error with your account data.\nPlease sign up with another email.',
-            buttonList: [
-              ['Sign-Up', kLightBlue, () {
-                Navigator.pushNamed(context, '/signup');
-              }
-              ]
-            ]);
+            text: 'Sorry: it appears there is an error with your input information.',
+        );
         return;
       }
       print (userDataSnapshot.value.toString());
@@ -296,6 +290,7 @@ class _LoginPageState extends State<LoginPage> {
         else if (v.key == 'l')
           await uSetPrefsValue(kLnameKey, v.value.toString());
       }
+      await uSetPrefsValue('id', id);
 
       setSpinner(false);
       Navigator.pop(context);

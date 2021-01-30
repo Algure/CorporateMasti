@@ -37,17 +37,20 @@ class _TeamChoosePageState extends State<TeamChoosePage> {
         child: Column(
           children: [
             SizedBox(height: 20,),
-            Text('Select your favorite team.', style: TextStyle(color: Colors.black, fontSize: 16),),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+                children:[
+                  SizedBox(width:10),
+                  GestureDetector(
+                      onTap: (){
+                        moveToSignUpPage();
+                      },
+                      child: Icon(CupertinoIcons.chevron_left , color: Colors.black, size: 16,)),
+                  SizedBox(width:10),
+                  Text('Select your favorite team.', style: TextStyle(color: Colors.black, fontSize: 16),)]),
             SizedBox(height: 50,),
             Row(
             children: [
-              SizedBox(width: 20,),
-              Icon(CupertinoIcons.chevron_left , color: Colors.black, size: 12,),
-              GestureDetector(
-                  onTap: (){
-                    moveToSignUpPage();
-                  },
-                  child: Text('back', style: TextStyle(color: Colors.black))),
               Spacer(),
               GestureDetector(
                   onTap: (){
@@ -111,8 +114,9 @@ class _TeamChoosePageState extends State<TeamChoosePage> {
         itemList.add(TeamChooseWidget( teamData:maps[key].toString(),
           onTeamPressed: (){
             print('team pressed');
-
-          }, largeNumberText: dex.toString(),));
+            saveFavoriteTeam(key.toString());
+          },
+          largeNumberText: dex.toString(),));
         dex++;
       }catch(e){
         print("Event add exception ${e.toString()}");
@@ -124,13 +128,13 @@ class _TeamChoosePageState extends State<TeamChoosePage> {
   Future<void> saveFavoriteTeam(String teamId) async {
     showProgress(true);
     await uSetPrefsValue(kFavTeam, teamId);
-    moveToHomePage();
     showProgress(false);
+    moveToHomePage();
   }
 
   void moveToHomePage(){
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>MyHomePage(justSignedIn: true,)));
   }
 
   void moveToSignUpPage(){

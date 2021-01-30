@@ -48,50 +48,41 @@ class _LoginStartPageState extends State<LoginStartPage> {
           color: Colors.white,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 30,),
-                  Hero(
-                      tag: 'mainLogo',
-                      child: Image.asset('images/logo.png', height: 150,)),
-                  SizedBox(height: 50,),
-                  Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(width: 3, color: Colors.black),
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: FlatButton(onPressed: (){
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
-                    },
-                      child: Text('Get Started', style: TextStyle(color: kThemeOrange),),
-                      splashColor: Colors.white,),
-                  ),
-                  SizedBox(height: 20,),
-                  Text('Already have an account? ', textAlign: TextAlign.end, style: kHintStyle,),
-                  Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                        color: kThemeOrange,
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: FlatButton(onPressed: (){
-                      Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
-                    },
-                      child: Text('Log in', style: TextStyle(color: Colors.black),),
-                      splashColor: Colors.white,),
-                  ),
-                ],
+              Hero(
+                  tag: 'mainLogo',
+                  child: Image.asset('images/logo.png', height: 150,)),
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(width: 1, color: Colors.black),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: FlatButton(onPressed: (){
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
+                },
+                  child: Text('Get Started', style: TextStyle(color: kThemeOrange, fontWeight: FontWeight.bold),),
+                  splashColor: Colors.white,),
+              ),
+              SizedBox(height: 20,),
+              Text('Already have an account? ', textAlign: TextAlign.end, style: kHintStyle,),
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: kThemeOrange,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: FlatButton(onPressed: (){
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+                },
+                  child: Text('Log in', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                  splashColor: Colors.white,),
               ),
             ],
           ),
