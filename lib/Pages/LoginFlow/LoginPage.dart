@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:corporatemasti/Pages/LoginFlow/RetrievePasswordPage.dart';
 import 'package:corporatemasti/Pages/LoginFlow/SignupPage.dart';
 import 'package:corporatemasti/Utilities/constants.dart';
 import 'package:corporatemasti/Utilities/utilities.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../NewsPage.dart';
@@ -19,23 +24,26 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool showPassword=false;
+  bool showProgress=false;
   double marginVal=16;
   Color textFillColor=Color(0xFFEEEEEE);
   CurvedAnimation slideInLeftAnim;
   String password;
   String email;
-  bool showProgress=false;
+
+  int failTimes=0;
 
   FocusNode emailFocus= FocusNode();
   FocusNode paswordFocus= FocusNode();
 
   var hintColor=Colors.grey;
   var hintSelectedColor=Colors.grey;
-  Color kThemeYellow=Colors.yellow;
+  FirebaseAuth fbauth ;
 
   @override
   void initState() {
-
+    fbauth = FirebaseAuth.instance;
+    signOutUser();
   }
 
   @override
@@ -164,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(10)
                       ),
                       child: GestureDetector(onTap: (){
-//                        launchRetrievePasswordUrl();
+                        moveToRetrievePassPage();
                       },
                         child: Text(' retrieve password', textAlign: TextAlign.start, style: TextStyle(color: kThemeOrange),),
                       ),
@@ -202,8 +210,8 @@ class _LoginPageState extends State<LoginPage> {
       }
       // Check for a valid email address.
       if (email.isEmpty) {
-        cancel = true;
         uShowErrorDialog(this.context,'An error occured: Invalid email address');
+        cancel = true;
         return;
       } else if (!email.contains('@')||!email.contains('.com')|| email.length<6) {
         uShowErrorDialog(this.context,'An error occured: Invalid email address');
@@ -242,25 +250,14 @@ class _LoginPageState extends State<LoginPage> {
       print('email safe: ${snapshot.value.toString()}');
       if (snapshot == null || snapshot.value == null) {
         setSpinner(false);
-        uShowCustomDialog(context: this.context,
-            icon: CupertinoIcons.person_add,
-            iconColor: Colors.blueGrey,
-            text: 'Sorry: it appears we do not have your account.\nPlease quickly follow the sign-up process.',
-            buttonList: [
-              ['Sign-Up', kLightBlue, () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
-              }
-              ]
-            ]);
+        showNoAccountDialog();
         return;
       }
       bool error=false;
+
       print('gotten to sign IN');//Debug method
-      FirebaseAuth fbauth = FirebaseAuth.instance;
       var userCred = await fbauth.signInWithEmailAndPassword(
           email: email, password: password);
-
       if (userCred == null || userCred.user.uid == null) {
         setSpinner(false);
         uShowErrorDialog(context, 'An error occured.');
@@ -271,14 +268,12 @@ class _LoginPageState extends State<LoginPage> {
 
       print('userSnapshot: ${userDataSnapshot.value.toString()}');
       //if user is a registered seller, download his info.
-
       if (userDataSnapshot == null || userDataSnapshot.value == null) {
         setSpinner(false);
-        uShowErrorDialog(context,'Sorry! it appears there is an error with your information.');
+        uShowErrorDialog(context,'Sorry! there appears to be an error with your information.');
         return;
       }
       print (userDataSnapshot.value.toString());
-
       await saveUserData(id: id, userDataSnapshot: userDataSnapshot);
       setSpinner(false);
       moveToHomePage();
@@ -286,7 +281,9 @@ class _LoginPageState extends State<LoginPage> {
 
       if(e.toString().contains('wrong-password')){
         print(e);
-        await saveEmailAsFailed(email);
+        failTimes++;
+        if(failTimes>1)
+          await saveEmailAsFailed(email);
         setSpinner(false);
         showRetrievePasswordDialog();
         return;
@@ -295,6 +292,35 @@ class _LoginPageState extends State<LoginPage> {
       uShowErrorDialog(context, 'An error occured ! Please re-check inputs');
       print(e);
     }
+  }
+
+  Future<String> downloadPic(String element) async {
+    String url='$kImageUrlStart$element';
+    String fileId=element;
+    final directory= await getApplicationDocumentsDirectory();
+    String path= directory.path+'/CorpMasti';
+    if(!Directory(path).existsSync()) await Directory(path).create();
+    path+='/$fileId.jpg';
+    File newFile=File(path);
+    await newFile.create();
+
+    Response response=await get(url);
+    await newFile.writeAsBytes(response.bodyBytes);
+    return path;
+  }
+
+  void showNoAccountDialog(){
+    uShowCustomDialog(context: this.context,
+        icon: CupertinoIcons.person_add,
+        iconColor: Colors.blueGrey,
+        text: 'Sorry: it appears we do not have your account.\nPlease quickly follow the sign-up process.',
+        buttonList: [
+          ['Sign-Up', kLightBlue, () {
+            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
+          }
+          ]
+        ]);
   }
 
   void moveToHomePage(){
@@ -306,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void moveToRetrievePassPage(){
     Navigator.push(context, MaterialPageRoute(builder: (context){
-      return RetrievePasswordPage(justLoggedIn: true,);
+      return RetrievePasswordPage();
     }));
   }
 
@@ -318,7 +344,7 @@ class _LoginPageState extends State<LoginPage> {
     else if (v.key == 'p')
     await uSetPrefsValue(kPhoneKey, v.value.toString());
     else if (v.key == 's')
-    await uSetPrefsValue('state', v.value.toString());
+    await uSetPrefsValue(kProfilePicOnline, v.value.toString());
     else if (v.key == 'w')
     await uSetPrefsValue('wallet', v.value.toString());
     else if (v.key == 'f')
@@ -327,7 +353,8 @@ class _LoginPageState extends State<LoginPage> {
     await uSetPrefsValue(kLnameKey, v.value.toString());
     }
     await uSetPrefsValue('id', id);
-
+    String imagePath= await downloadPic(await uGetSharedPrefValue(kProfilePicOnline));
+    await uSetPrefsValue(kProfilePicOnPhone, imagePath);
   }
 
   Future<void> saveEmailAsFailed(String email) async {
@@ -345,12 +372,19 @@ class _LoginPageState extends State<LoginPage> {
         iconColor: Colors.red,
         text: s,
         buttonList: [
-          ['Retrieve password', Colors.blue, () {
-            Navigator.pop(context);
-            Navigator.pushNamed(context, '/retrieve');
-          }
+          [
+            'Retrieve password', kThemeOrange,
+                () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>RetrievePasswordPage()));
+            }
           ]
         ]);
+  }
+
+  Future<void> signOutUser() async {
+    if(fbauth.currentUser!=null)
+    await fbauth.signOut();
   }
 
 }

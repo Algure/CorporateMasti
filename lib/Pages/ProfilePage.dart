@@ -101,11 +101,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: (){
                               selectImage();
                             },
-                            child: Icon(Icons.camera, color: kThemeOrange, size: 30, )),
+                            child: Icon(Icons.camera, color: Colors.black, size: 30, )),
                       )
                     ]
                   ),
-                  Text('$_fname $_sname', style: TextStyle(color: Colors.black, fontSize: 26, fontWeight: FontWeight.bold)),
+                  Text('$_fname $_sname', style: TextStyle(color: kThemeOrange, fontSize: 26, fontWeight: FontWeight.bold)),
                   SizedBox(height: 5,),
                   Text('$_email', style:kHintStyle),
                   SizedBox(height: 25,),
@@ -116,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding:  EdgeInsets.only(right:18.0),
                       child: Text('A/C',textAlign:TextAlign.start, style:TextStyle(color:Colors.grey, fontSize: 10)),
                     ),
-                    Text('\$${wallet==null||wallet.isEmpty?'0':wallet}', style: TextStyle(color: Colors.black, fontSize: 16)),
+                    Text('\$${wallet==null||wallet.isEmpty?'0':wallet}', style: TextStyle(color: kGreen, fontSize: 16)),
                   ]
                   ),
                   SizedBox(height: 25,),
@@ -289,10 +289,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> setProfileDetails() async {
     showProgress(true);
+    id=(await uGetSharedPrefValue(kIdKey)).toString();
     _fname= (await uGetSharedPrefValue(kFnameKey)).toString();
     _sname= (await uGetSharedPrefValue(kLnameKey )).toString();
     _email= (await uGetSharedPrefValue(kMailKey)).toString();
-    _phoneNumber=(await uGetSharedPrefValue(kPhoneKey)).toString();
+    _phoneNumber=((await uGetSharedPrefValue(kPhoneKey))??'').toString();
     _address= (await uGetSharedPrefValue(kAdressKey)).toString();
     wallet= (await uGetSharedPrefValue(kWalletKey)).toString();
     imageUrl= (await uGetSharedPrefValue(kProfilePicOnPhone)).toString();
@@ -418,7 +419,6 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     print("download url: "+downloadUrl);
     List<String> downloadUrls=downloadUrl.split('/');
-
     return downloadUrls[downloadUrls.length-1];
   }
 

@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
 
 
-const kImageUrlStart='https://firebasestorage.googleapis.com/v0/b/soccerevents-e5543.appspot.com/o/';
 
 Future<bool> uCheckInternet() async {
   var connectivityResult = await (Connectivity().checkConnectivity());
@@ -154,7 +153,7 @@ void uShowCustomDialog({BuildContext context, IconData icon, Color iconColor, St
   }
   Dialog errorDialog= Dialog(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    backgroundColor: Color(0xFFDDDDFF),
+    backgroundColor: Colors.white,
     child: Container(
       height: 350,
       child: Column(

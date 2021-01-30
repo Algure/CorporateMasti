@@ -58,3 +58,5 @@ const kUploadedKey='uploaded';
 const kResetKey='Reset';
 const kAdressKey='address';
 const kFavTeam='kFavTeam';
+
+const kImageUrlStart='https://firebasestorage.googleapis.com/v0/b/soccerevents-e5543.appspot.com/o/';

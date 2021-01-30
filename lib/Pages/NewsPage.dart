@@ -208,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Spacer(),
                 FlatButton(
                   onPressed: (){
-                    logOut();
+                    showLogoutDialog();
                   },
                   color: Colors.white,
                   child: Row(
@@ -392,18 +392,31 @@ class _MyHomePageState extends State<MyHomePage> {
     showProgress(false);
   }
 
+  void showLogoutDialog(){
+    Navigator.pop(context);
+    Function() cancelFunction=(){Navigator.pop(context);};
+    uShowCustomDialog(context: context, icon: CupertinoIcons.person_crop_circle_badge_xmark, iconColor: Colors.black,
+        text:'You would be logged out of this account',
+        buttonList: [['cancel', kThemeOrange ,cancelFunction ],['confirm', Colors.lightBlueAccent, (){initiateLogout();}]]
+    );
+  }
+
+  initiateLogout(){
+    logOut();
+  }
+
   void moveToProfilePage() {
     Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
   }
 
   Future<void> logOut() async {
-    Navigator.pop(context);//To close navigation drawer
 
     showProgress(true);
     SharedPreferences sp=await SharedPreferences.getInstance();
     await sp.clear();
     showProgress(false);
 
+    Navigator.pop(context);// Close dialog
     Navigator.pop(context);// Leave News activity
     Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginStartPage()));
   }
