@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../ProfileObject.dart';
 import '../NewsPage.dart';
 
 class SignupPage extends StatefulWidget {
@@ -240,8 +241,8 @@ class _SignupPageState extends State<SignupPage> {
                             borderRadius: BorderRadius.circular(10)
                         ),
                         child: FlatButton(onPressed: (){
-//                          attemptSave();
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>TeamChoosePage()));
+                          attemptSave();
+//                        Navigator.push(context, MaterialPageRoute(builder: (context)=>TeamChoosePage()));
                         },
                           child: Text('Sign up', style: TextStyle(color: Colors.black),),
                           splashColor: Colors.white,),
@@ -342,10 +343,6 @@ class _SignupPageState extends State<SignupPage> {
         showProgress(false);
         uShowErrorDialog(this.context, 'Invalid email');
         return;
-      }else if(_email!=_email2){
-        showProgress(false);
-        uShowErrorDialog(this.context, 'Email does not match.');
-        return;
       }
 
 //      _pno = _pno.trim();
@@ -367,6 +364,10 @@ class _SignupPageState extends State<SignupPage> {
         showProgress(false);
         uShowErrorDialog(this.context, 'Password does not match');
         return;
+      }else if (_password2.length<6) {
+        showProgress(false);
+        uShowErrorDialog(this.context, 'Password is too short');
+        return;
       }
       if (!(await uCheckInternet())) {
         showProgress(false);
@@ -382,55 +383,84 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> attemptSignUp() async {
     print('sign up mail $_email');
-    DataSnapshot snapshot= await FirebaseDatabase.instance.reference().child("cus").child(_email.replaceAll('.', '')).once();
-    if(snapshot!=null && snapshot.value.toString()!="null") {
-      print('sign up mail value ${snapshot.value.toString()}');
-      showProgress(false);
-      uShowCustomDialog(
-        context: this.context,
-        icon: CupertinoIcons.person,
-        iconColor: Colors.blueGrey,
-        text: 'It appears this email is registered.\nSign-up with another email.',
-      );
-      return;
-    }
-    bool hasError=false;
-    FirebaseAuth fbauth = FirebaseAuth.instance;
-    UserCredential userCred = await fbauth.createUserWithEmailAndPassword(
-        email: _email, password: _password).catchError((onError)=>{
-          if(onError!=null){
-            hasError=true
-          }
-    });
-    if(userCred.user==null || hasError) {
-      showProgress(false);
-      uShowCustomDialog(
-        context: this.context,
-        icon: CupertinoIcons.person,
-        iconColor: Colors.blueGrey,
-        text: 'An error occured !',
-      );
-      return;
-    }
+    try {
+      DataSnapshot snapshot = await FirebaseDatabase.instance.reference().child(
+          "cus").child(_email.replaceAll('.', '')).once();
+      if (snapshot != null && snapshot.value.toString() != "null") {
+        print('sign up mail value ${snapshot.value.toString()}');
+        showProgress(false);
+        uShowCustomDialog(
+          context: this.context,
+          icon: CupertinoIcons.person,
+          iconColor: Colors.blueGrey,
+          text: 'It appears this email is registered.\nSign-up with another email.',
+        );
+        return;
+      }
+      bool hasError = false;
+      FirebaseAuth fbauth = FirebaseAuth.instance;
+      var userCred = await fbauth.createUserWithEmailAndPassword(
+          email: _email, password: _password).catchError((onError)
+      {
+        if(onError != null){
+          print('error string ${onError.toString()}');
+          hasError = true;
+        }
+      });
+      if (userCred==null||userCred.user.uid == null || hasError) {
+        showProgress(false);
+        showProfileErrorDialog();
+        return;
+      }
+      String id = userCred.user.uid.toString();
+      await uploadUserDataToCloudDatabase(id);
+      await saveUserToPrefs(id);
 
-    String id = userCred.user.uid.toString();
-    await uSetPrefsValue('id', id);
+      print('ran others');
 
-    print('ran others');
-    SharedPreferences sp=await SharedPreferences.getInstance();
-    await sp.setString('email', _email);
-    await sp.setString('pno', _pno);
-    await sp.setString('fname', _fname);
-    await sp.setString('lname', _sname);
-    await sp.setString('state',_state);
-    await sp.setString('password',_password);
-    await sp.setString('uploaded','false');
-    showProgress(false);
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (context){
+      showProgress(false);
+      moveToTeamChoosePage();
+    }catch(exception){
+      print('exception: ${exception.toString()}');
+      showProgress(false);
+      uShowErrorDialog(this.context,'An error occured');
+    }
+  }
+
+  void showProfileErrorDialog(){
+    uShowCustomDialog(
+      context: this.context,
+      icon: CupertinoIcons.person,
+      iconColor: Colors.blueGrey,
+      text: 'An error occured !',
+    );
+  }
+
+  void moveToTeamChoosePage(){
+    Navigator.pop(this.context);
+    Navigator.push(this.context, MaterialPageRoute(builder: (context){
       return TeamChoosePage();
     }));
-    dispose();
+  }
+
+  Future<void> uploadUserDataToCloudDatabase(String id) async {
+    await FirebaseDatabase.instance.reference().child("cus").child(_email.replaceAll('.', '')).set(id);
+    ProfileObject profile= ProfileObject();
+    profile.e=_email;
+    profile.f=_fname;
+    profile.l=_sname;
+    await FirebaseDatabase.instance.reference().child("PROFILE").child(id).set(profile.toMap());
+  }
+
+  Future<void> saveUserToPrefs(String id) async {
+    await uSetPrefsValue('id', id);
+     await uSetPrefsValue('email', _email);
+    await uSetPrefsValue('pno', _pno);
+    await uSetPrefsValue('fname', _fname);
+    await uSetPrefsValue('lname', _sname);
+    await uSetPrefsValue('state',_state);
+    await uSetPrefsValue('password',_password);
+    await uSetPrefsValue('uploaded','false');
   }
 
   toggleIconVisibility(){

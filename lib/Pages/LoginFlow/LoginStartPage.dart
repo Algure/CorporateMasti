@@ -20,6 +20,7 @@ class LoginStartPage extends StatefulWidget {
 class _LoginStartPageState extends State<LoginStartPage> {
   bool showPassword=false;
   double marginVal=16;
+  double buttonTextSize=20;
   Color textFillColor=Color(0x22FFFFFF);
   CurvedAnimation slideInLeftAnim;
   String password;
@@ -53,6 +54,7 @@ class _LoginStartPageState extends State<LoginStartPage> {
               Hero(
                   tag: 'mainLogo',
                   child: Image.asset('images/logo.png', height: 150,)),
+              SizedBox(height: 50),
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.symmetric(horizontal: 10),
@@ -65,11 +67,15 @@ class _LoginStartPageState extends State<LoginStartPage> {
                   Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
                 },
-                  child: Text('Get Started', style: TextStyle(color: kThemeOrange, fontWeight: FontWeight.bold),),
+                  child: Padding(
+                    padding: EdgeInsets.all(18.0),
+                    child: Text('Get Started', style: TextStyle(color: kThemeOrange, fontSize: buttonTextSize, fontWeight: FontWeight.bold),),
+                  ),
                   splashColor: Colors.white,),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 28,),
               Text('Already have an account? ', textAlign: TextAlign.end, style: kHintStyle,),
+              SizedBox(height: 8,),
               Container(
                 width: double.infinity,
                 margin: EdgeInsets.symmetric(horizontal: 10),
@@ -81,7 +87,10 @@ class _LoginStartPageState extends State<LoginStartPage> {
                   Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));
                 },
-                  child: Text('Log in', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+                  child: Padding(
+                    padding:  EdgeInsets.all(18.0),
+                    child: Text('Log in', style: TextStyle(color: Colors.black,fontSize: buttonTextSize, fontWeight: FontWeight.bold),),
+                  ),
                   splashColor: Colors.white,),
               ),
             ],
@@ -155,16 +164,7 @@ class _LoginStartPageState extends State<LoginStartPage> {
       print('email safe: ${snapshot.value.toString()}');
       if (snapshot == null || snapshot.value == null) {
         setSpinner(false);
-        uShowCustomDialog(context: this.context,
-            icon: CupertinoIcons.person_add,
-            iconColor: Colors.blueGrey,
-            text: 'Sorry: it appears we do not have your account.\nPlease quickly follow the sign-up process.',
-            buttonList: [
-              ['Sign-Up', kLightBlue, () {
-                Navigator.pushNamed(context, '/signup');
-              }
-              ]
-            ]);
+        showSignUpAgainDiaolog('Sorry: it appears we do not have your account.\nPlease quickly follow the sign-up process.');
         return;
       }
       bool error=false;
@@ -181,16 +181,7 @@ class _LoginStartPageState extends State<LoginStartPage> {
 
       if (userDataSnapshot == null || userDataSnapshot.value == null) {
         setSpinner(false);
-        uShowCustomDialog(context: this.context,
-            icon: Icons.warning,
-            iconColor: Colors.red,
-            text: 'Sorry: it appears there is an error with your account data.\nPlease sign up with another email.',
-            buttonList: [
-              ['Sign-Up', kLightBlue, () {
-                Navigator.pushNamed(context, '/signup');
-              }
-              ]
-            ]);
+        showSignUpAgainDiaolog('Sorry: it appears there is an error with your account data.\nPlease sign up with another email.');
         return;
       }
       print (userDataSnapshot.value.toString());
@@ -233,6 +224,21 @@ class _LoginStartPageState extends State<LoginStartPage> {
     }
   }
 
+  void showSignUpAgainDiaolog( String signUpText){
+    uShowCustomDialog(context: this.context,
+        icon: Icons.warning,
+        iconColor: Colors.red,
+        text: signUpText,
+        buttonList: [
+          ['Sign-Up', kLightBlue, () {
+
+            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupPage()));
+          }
+          ]
+        ]);
+  }
+
   void showRetrievePasswordDialog([String s='Login attempt error. Password and email do not match.']){
     uShowCustomDialog(context: this.context,
         icon: Icons.error,
@@ -246,5 +252,26 @@ class _LoginStartPageState extends State<LoginStartPage> {
           ]
         ]);
   }
+
+//  Future<void> uploadUserDataToCloudDatabase(String id) async {
+//    await FirebaseDatabase.instance.reference().child("cus").child(_email.replaceAll('.', '')).set(id);
+//    ProfileObject profile= ProfileObject();
+//    profile.e=_email;
+//    profile.f=_fname;
+//    profile.l=_sname;
+//    await FirebaseDatabase.instance.reference().child("cus").child(id).set(profile.toMap());
+//  }
+//
+//  Future<void> saveUserToPrefs(String id) async {
+//    await uSetPrefsValue('id', id);
+//    await uSetPrefsValue('email', _email);
+//    await uSetPrefsValue('pno', _pno);
+//    await uSetPrefsValue('fname', _fname);
+//    await uSetPrefsValue('lname', _sname);
+//    await uSetPrefsValue('state',_state);
+//    await uSetPrefsValue('password',_password);
+//    await uSetPrefsValue('uploaded','false');
+//  }
+
 
 }

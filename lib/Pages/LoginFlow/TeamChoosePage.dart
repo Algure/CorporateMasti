@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class TeamChoosePage extends StatefulWidget {
@@ -34,49 +35,52 @@ class _TeamChoosePageState extends State<TeamChoosePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 20,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-                children:[
-                  SizedBox(width:10),
-                  GestureDetector(
-                      onTap: (){
-                        moveToSignUpPage();
-                      },
-                      child: Icon(CupertinoIcons.chevron_left , color: Colors.black, size: 16,)),
-                  SizedBox(width:10),
-                  Text('Select your favorite team.', style: TextStyle(color: Colors.black, fontSize: 16),)]),
-            SizedBox(height: 50,),
-            Row(
+        child: ModalProgressHUD(
+          inAsyncCall: progress,
+          child: Column(
             children: [
-              Spacer(),
-              GestureDetector(
-                  onTap: (){
-                   moveToHomePage();
+              SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                  children:[
+                    SizedBox(width:10),
+                    GestureDetector(
+                        onTap: (){
+                          moveToSignUpPage();
+                        },
+                        child: Icon(CupertinoIcons.chevron_left , color: Colors.black, size: 16,)),
+                    SizedBox(width:10),
+                    Text('Select your favorite team.', style: TextStyle(color: Colors.black, fontSize: 16),)]),
+              SizedBox(height: 50,),
+              Row(
+              children: [
+                Spacer(),
+                GestureDetector(
+                    onTap: (){
+                     moveToHomePage();
+                    },
+                    child: Text('skip', style: TextStyle(color: kThemeOrange))),
+                Icon(CupertinoIcons.chevron_right , color: kThemeOrange, size: 12,),
+                SizedBox(width: 20,),
+              ]),
+              SizedBox(height: 20,),
+              Expanded(
+                child: GridView.builder(
+                  semanticChildCount: 3,
+                  itemCount: itemList.length,
+                  itemBuilder: (context, dex) {
+                    return itemList[dex];
                   },
-                  child: Text('skip', style: TextStyle(color: kThemeOrange))),
-              Icon(CupertinoIcons.chevron_right , color: kThemeOrange, size: 12,),
-              SizedBox(width: 20,),
-            ]),
-            SizedBox(height: 20,),
-            Expanded(
-              child: GridView.builder(
-                semanticChildCount: 3,
-                itemCount: itemList.length,
-                itemBuilder: (context, dex) {
-                  return itemList[dex];
-                },
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 3,
-                    crossAxisSpacing: 3,
-                    childAspectRatio: 1
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 3,
+                      crossAxisSpacing: 3,
+                      childAspectRatio: 1
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

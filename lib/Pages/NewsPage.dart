@@ -58,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
       uShowSignupDialog(context: context);
     }
     getAllMarketItems(context);
+    setNavDetails();
   }
 
   @override
@@ -375,6 +376,12 @@ class _MyHomePageState extends State<MyHomePage> {
         print("Event add exception ${e.toString()}");
       }
     }
+    showProgress(false);
+  }
+
+  Future<void> setNavDetails() async {
+    userName='${await uGetSharedPrefValue(kFnameKey)} ${await uGetSharedPrefValue(kLnameKey)}';
+    userMail= await uGetSharedPrefValue(kMailKey);
     showProgress(false);
   }
 

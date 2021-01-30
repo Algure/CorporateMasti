@@ -194,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       bool cancel = false;
       // Check for a valid password, if the user entered one.
-      if (password.isEmpty || password.length<5) {
+      if (password.isEmpty || password.length<6) {
         uShowErrorDialog(this.context,'An error occured: Invalid password.\nPassword cannot not be less than 5 characters.');
         cancel = true;
         return;
@@ -260,51 +260,32 @@ class _LoginPageState extends State<LoginPage> {
       var userCred = await fbauth.signInWithEmailAndPassword(
           email: email, password: password);
 
+      if (userCred == null || userCred.user.uid == null) {
+        setSpinner(false);
+        uShowErrorDialog(context, 'An error occured.');
+        return;
+      }
       String id = userCred.user.uid.toString();
-      DataSnapshot userDataSnapshot = await FirebaseDatabase.instance.reference().child('cad').child(id).once();
+      DataSnapshot userDataSnapshot = await FirebaseDatabase.instance.reference().child('PROFILE').child(id).once();
+
       print('userSnapshot: ${userDataSnapshot.value.toString()}');
       //if user is a registered seller, download his info.
 
       if (userDataSnapshot == null || userDataSnapshot.value == null) {
         setSpinner(false);
-        uShowCustomDialog(context: this.context,
-            icon: Icons.warning,
-            iconColor: Colors.red,
-            text: 'Sorry: it appears there is an error with your input information.',
-        );
+        uShowErrorDialog(context,'Sorry! it appears there is an error with your information.');
         return;
       }
       print (userDataSnapshot.value.toString());
-      await uSetPrefsValue(kIdKey, id);
-      for (var v in userDataSnapshot.value.entries) {
-        if (v.key == 'e')
-          await uSetPrefsValue('email', v.value.toString());
-        else if (v.key == 'p')
-          await uSetPrefsValue(kPhoneKey, v.value.toString());
-        else if (v.key == 's')
-          await uSetPrefsValue('state', v.value.toString());
-        else if (v.key == 'w')
-          await uSetPrefsValue('wallet', v.value.toString());
-        else if (v.key == 'f')
-          await uSetPrefsValue(kFnameKey, v.value.toString());
-        else if (v.key == 'l')
-          await uSetPrefsValue(kLnameKey, v.value.toString());
-      }
-      await uSetPrefsValue('id', id);
 
+      await saveUserData(id: id, userDataSnapshot: userDataSnapshot);
       setSpinner(false);
-      Navigator.pop(context);
-      Navigator.push(context, MaterialPageRoute(builder: (context){
-        return MyHomePage(justLoggedIn: true,);
-      }));
+      moveToHomePage();
     }catch(e){
 
       if(e.toString().contains('wrong-password')){
         print(e);
-        falseEmail = sp.getString('failedMail') ?? '';
-        falseEmail += ',$email';
-        await sp.setString('failedMail', falseEmail);
-        print(await sp.getString('failedMail'));
+        await saveEmailAsFailed(email);
         setSpinner(false);
         showRetrievePasswordDialog();
         return;
@@ -313,6 +294,42 @@ class _LoginPageState extends State<LoginPage> {
       uShowErrorDialog(context, 'An error occured ! Please re-check inputs');
       print(e);
     }
+  }
+
+  void moveToHomePage(){
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context){
+      return MyHomePage(justLoggedIn: true,);
+    }));
+  }
+
+  Future<void> saveUserData({var userDataSnapshot, String id}) async {
+    await uSetPrefsValue(kIdKey, id);
+    for (var v in userDataSnapshot.value.entries) {
+      if (v.key == 'e')
+        await uSetPrefsValue('email', v.value.toString());
+    else if (v.key == 'p')
+    await uSetPrefsValue(kPhoneKey, v.value.toString());
+    else if (v.key == 's')
+    await uSetPrefsValue('state', v.value.toString());
+    else if (v.key == 'w')
+    await uSetPrefsValue('wallet', v.value.toString());
+    else if (v.key == 'f')
+    await uSetPrefsValue(kFnameKey, v.value.toString());
+    else if (v.key == 'l')
+    await uSetPrefsValue(kLnameKey, v.value.toString());
+    }
+    await uSetPrefsValue('id', id);
+
+  }
+
+  Future<void> saveEmailAsFailed(String email) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    String falseEmail = sp.getString('failedMail') ?? '';
+    falseEmail = sp.getString('failedMail') ?? '';
+    falseEmail += ',$email';
+    await sp.setString('failedMail', falseEmail);
+    print(await sp.getString('failedMail'));
   }
 
   void showRetrievePasswordDialog([String s='Login attempt error. Password and email do not match.']){
