@@ -6,7 +6,7 @@ class ProfileObject{
   String w;//wallet amount
   String f;//first name
   String l;//sur / last name
-  String s;
+  String s;// profile pic url: to be downloaded in file
 
   toMap() {
     return {

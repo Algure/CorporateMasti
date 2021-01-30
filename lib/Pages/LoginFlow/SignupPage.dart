@@ -51,10 +51,7 @@ class _SignupPageState extends State<SignupPage> {
   FocusNode password2Focus=FocusNode();
   FocusNode compoundFocus=FocusNode();
 
-  List<String> compoundStrings=[];
-
   Color hintColor=Colors.grey;
-
   Color hintSelectedColor=Colors.grey;
 
   @override

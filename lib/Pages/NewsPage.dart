@@ -9,6 +9,7 @@ import 'package:corporatemasti/CustomViews/ImageTransTextUp.dart';
 import 'package:corporatemasti/DataObjects/EventData.dart';
 import 'package:corporatemasti/DataObjects/EventsObject.dart';
 import 'package:corporatemasti/Database/OnlineEventsDB.dart';
+import 'package:corporatemasti/Pages/LoginFlow/LoginStartPage.dart';
 import 'package:corporatemasti/Pages/TeamsPage.dart';
 import 'package:corporatemasti/Pages/TournamentsPage.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -18,9 +19,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utilities/constants.dart';
 import 'FantasyPage.dart';
+import 'ProfilePage.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title="News",  this.justLoggedIn=false, this.justSignedIn=false}) : super(key: key);
@@ -98,25 +101,31 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
               children:[
                 Container(
-                  margin: EdgeInsets.only(left: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 60,),
-                      Container(
-                        height: 80,width: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(image: AssetImage('images/footballim.jpg'), fit: BoxFit.fill)
+                  margin: EdgeInsets.only(left: 10),
+                  child: FlatButton(
+                    splashColor: kThemeOrange,
+                    onPressed: (){
+                     moveToProfilePage();
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 60,),
+                        Container(
+                          height: 80,width: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(image: AssetImage('images/footballim.jpg'), fit: BoxFit.fill)
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10,),
-                      Text(userName, textAlign: TextAlign.start,style: TextStyle(color: Colors.black, fontSize:20, fontWeight: FontWeight.bold)),
-                      Text(userMail,textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize:10)),
-                      SizedBox(height: 20,)
-                    ],
+                        SizedBox(height: 10,),
+                        Text(userName, textAlign: TextAlign.start,style: TextStyle(color: Colors.black, fontSize:20, fontWeight: FontWeight.bold)),
+                        Text(userMail,textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize:10)),
+                        SizedBox(height: 20,)
+                      ],
+                    ),
                   ),
                 ),
                 Container(height: 0.5,width: double.infinity,color: Colors.grey.shade900,),
@@ -185,21 +194,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 FlatButton(
                   onPressed: (){
                     Navigator.pop(context);
-//                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsPage()));
-                  },
-                  color: Colors.white,
-                  child: Row(
-                    children: [
-                      Image.asset('images/profile.png', color: kGreen,height: navPicHeight, width: navPicWidth,),
-                      SizedBox(width: 10,),
-                      Text('Profile', style: TextStyle(color: kGreen),)
-                    ],
-                  ),
-                ),
-                Spacer(),
-                FlatButton(
-                  onPressed: (){
-                    Navigator.pop(context);
                     displayAboutDialog();
                   },
                   color: Colors.white,
@@ -211,7 +205,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-
+                Spacer(),
+                FlatButton(
+                  onPressed: (){
+                    logOut();
+                  },
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Icon(Icons.power_settings_new, color:kGreen,size: navPicHeight,),
+                      SizedBox(width: 10,),
+                      Text('Log Out', style: TextStyle(color: kGreen),)
+                    ],
+                  ),
+                ),
               ]
           ),
         ),
@@ -383,6 +390,22 @@ class _MyHomePageState extends State<MyHomePage> {
     userName='${await uGetSharedPrefValue(kFnameKey)} ${await uGetSharedPrefValue(kLnameKey)}';
     userMail= await uGetSharedPrefValue(kMailKey);
     showProgress(false);
+  }
+
+  void moveToProfilePage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage()));
+  }
+
+  Future<void> logOut() async {
+    Navigator.pop(context);//To close navigation drawer
+
+    showProgress(true);
+    SharedPreferences sp=await SharedPreferences.getInstance();
+    await sp.clear();
+    showProgress(false);
+
+    Navigator.pop(context);// Leave News activity
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginStartPage()));
   }
 
 }

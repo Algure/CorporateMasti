@@ -1,3 +1,4 @@
+import 'package:corporatemasti/Pages/LoginFlow/RetrievePasswordPage.dart';
 import 'package:corporatemasti/Pages/LoginFlow/SignupPage.dart';
 import 'package:corporatemasti/Utilities/constants.dart';
 import 'package:corporatemasti/Utilities/utilities.dart';
@@ -300,6 +301,12 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(builder: (context){
       return MyHomePage(justLoggedIn: true,);
+    }));
+  }
+
+  void moveToRetrievePassPage(){
+    Navigator.push(context, MaterialPageRoute(builder: (context){
+      return RetrievePasswordPage(justLoggedIn: true,);
     }));
   }
 

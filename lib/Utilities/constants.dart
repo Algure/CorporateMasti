@@ -10,6 +10,7 @@ const TextStyle kTitleStyle= TextStyle(color: kGreen, fontWeight: FontWeight.bol
 const TextStyle kSubtitleStyle=  TextStyle(color: Colors.black,  fontSize: 12);
 const TextStyle kTeamStyle=  TextStyle(color: Colors.white,  fontSize: 10);
 const double kWidgetsMargin=15;
+const int kMaxProfileUpdatesAMonth=6;
 
 const kNavSelectedColor=Colors.black;
 const kBackgroundColor=Color(0xFFEEEEEE);
@@ -43,6 +44,10 @@ const linedFocusedBorder = UnderlineInputBorder(
 );
 
 const kIdKey='id';
+const kProfileUpdateTime='kProfileUpdateTime';
+const kProfilePicOnline='kProfilePicOnline';
+const kProfilePicOnPhone='kProfilePicOnPhone';
+const kWalletKey='wallet';
 const kMailKey='email';
 const kPhoneKey='pno';
 const kFnameKey='fname';

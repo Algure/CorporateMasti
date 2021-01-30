@@ -2,6 +2,7 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,7 +36,24 @@ Future<void> uSetPrefsValue(String key, var value) async {
 }
 Future<dynamic> uGetSharedPrefValue(String key) async {
   SharedPreferences sp=await SharedPreferences.getInstance();
-  return sp.get(key).toString();
+  if(sp.containsKey(key))
+    return sp.get(key).toString();
+  else
+    return '';
+}
+
+void uShowMessageNotification(String text) {
+  showSimpleNotification(
+        Text(text??'', style: TextStyle(color: Colors.green),),
+      leading:Icon(Icons.check, color:Colors.white),
+      background: Colors.white);
+}
+
+void uShowErrorNotification(String text){
+  showSimpleNotification(
+      Text(text, style: TextStyle(color: Colors.white),),
+      leading:Icon(Icons.warning, color:Colors.white),
+      background: Colors.red);
 }
 
 void uShowNoInternetDialog(BuildContext context){
